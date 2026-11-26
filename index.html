@@ -1,0 +1,422 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Shop Manager</title><link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Outfit:wght@500;700;800&family=Plus+Jakarta+Sans:wght@400;500;600&family=Nunito:wght@600;700;800&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#f2f5fa;--card:#fff;--ink:#14213d;--mut:#5b6784;--line:#dbe2ef;--acc:#0f766e;--accfg:#fff;--bad:#b42318;--warn:#a15c07;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media(prefers-color-scheme:dark){:root:not([data-theme=light]){--bg:#0e1626;--card:#16213a;--ink:#e8edf8;--mut:#9aa8c7;--line:#2a3856;--acc:#2dd4bf;--accfg:#06201d;--bad:#ff8a7a;--warn:#f5b44a}}
+:root[data-theme=dark]{--bg:#0e1626;--card:#16213a;--ink:#e8edf8;--mut:#9aa8c7;--line:#2a3856;--acc:#2dd4bf;--accfg:#06201d;--bad:#ff8a7a;--warn:#f5b44a}
+*{box-sizing:border-box}html{scroll-padding-top:env(safe-area-inset-top,0px)}
+body{margin:0;background:var(--bg);color:var(--ink);font:15px/1.5 "Segoe UI",system-ui,-apple-system,sans-serif}
+.app{display:flex;min-height:100vh}
+nav{width:210px;background:var(--ink);color:#fff;padding:16px 10px;flex-shrink:0}
+nav h1{font-size:17px;margin:0 8px 14px}nav small{display:block;opacity:.7;font-weight:400}
+nav button{display:block;width:100%;text-align:left;background:none;border:0;color:#cfd8ee;padding:9px 10px;border-radius:6px;font:inherit;cursor:pointer}
+nav button.on,nav button:hover{background:rgba(255,255,255,.14);color:#fff}
+main{flex:1;padding:20px;min-width:0}
+h2{margin:0 0 14px;font-size:21px}h3{margin:18px 0 8px;font-size:16px}
+.cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:12px;margin-bottom:8px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:8px;padding:12px 14px}
+.card b{display:block;font-size:22px}.card span{color:var(--mut);font-size:13px}
+.big{border-left:4px solid var(--acc)}
+.wrap{overflow-x:auto;background:var(--card);border:1px solid var(--line);border-radius:8px}
+table{border-collapse:collapse;width:100%;min-width:480px}th,td{padding:8px 10px;text-align:left;border-bottom:1px solid var(--line);white-space:nowrap}
+th{font-size:13px;color:var(--mut);font-weight:600}tr:last-child td{border:0}
+.r{text-align:right}.bad{color:var(--bad)}.ok{color:var(--acc)}.warn{color:var(--warn)}
+input,select,textarea{font:inherit;padding:8px 10px;border:1px solid var(--line);border-radius:6px;background:var(--card);color:var(--ink);max-width:100%}
+.row{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:12px;align-items:center}
+.btn{font:inherit;background:var(--acc);color:var(--accfg);border:0;padding:8px 14px;border-radius:6px;cursor:pointer;font-weight:600}
+.btn.s{background:none;color:var(--acc);border:1px solid var(--acc);padding:3px 9px;font-weight:500}
+.btn.d{background:none;color:var(--bad);border:1px solid var(--bad);padding:3px 9px;font-weight:500}
+button:focus-visible,input:focus-visible,select:focus-visible{outline:2px solid var(--acc);outline-offset:2px}
+.login{max-width:340px;margin:12vh auto;background:var(--card);border:1px solid var(--line);border-radius:10px;padding:24px}
+.login input,.login select{width:100%;margin-bottom:10px}.hint{color:var(--mut);font-size:13px}
+.cal{display:grid;grid-template-columns:repeat(7,1fr);gap:4px;max-width:420px}
+.cal button{aspect-ratio:1;border:1px solid var(--line);background:var(--card);color:var(--ink);border-radius:6px;cursor:pointer;font:inherit;position:relative}
+.cal button.dot::after{content:"";position:absolute;bottom:4px;left:50%;width:6px;height:6px;margin-left:-3px;border-radius:50%;background:var(--acc)}
+.cal button.sel{outline:2px solid var(--acc)}.cal i{font-style:normal;text-align:center;color:var(--mut);font-size:12px}
+.modal{position:fixed;inset:0;background:rgba(0,0,0,.5);display:flex;align-items:center;justify-content:center;padding:16px;z-index:9}
+.modal>div{background:var(--card);border-radius:10px;padding:20px;max-width:560px;width:100%;max-height:90vh;overflow:auto}
+@media(max-width:700px){.app{flex-direction:column}nav{width:100%;display:flex;overflow-x:auto;gap:2px;padding:8px}nav h1{display:none}nav button{width:auto;white-space:nowrap}}
+@media print{nav,.noprint{display:none!important}.modal{position:static;background:none}}
+body{background:radial-gradient(1000px 520px at 8% -10%,rgba(99,102,241,.28),transparent),radial-gradient(800px 480px at 100% 0,rgba(20,184,166,.24),transparent),var(--bg);background-attachment:fixed}
+.app{display:block}nav{display:none}
+main{max-width:1100px;margin:0 auto;animation:fade .35s both}
+@keyframes fade{from{opacity:0;transform:translateY(10px)}}
+.top{position:sticky;top:env(safe-area-inset-top,0px);z-index:5;display:flex;align-items:center;gap:10px;padding:10px 16px;backdrop-filter:blur(12px);background:color-mix(in srgb,var(--card) 78%,transparent);border-bottom:1px solid var(--line)}
+.brand{font-weight:700;flex:1;font-size:17px}
+.tiles{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:18px;perspective:900px;margin-top:14px}
+.tile{display:flex;flex-direction:column;align-items:center;gap:6px;padding:22px 10px 18px;border:1px solid var(--line);border-radius:20px;background:linear-gradient(145deg,var(--card),color-mix(in srgb,var(--card) 85%,var(--acc)));color:var(--ink);font:inherit;cursor:pointer;box-shadow:0 12px 26px rgba(20,33,61,.14),inset 0 2px 0 rgba(255,255,255,.35);transform-style:preserve-3d;transition:transform .25s,box-shadow .25s;animation:rise .6s both;animation-delay:calc(var(--i)*70ms)}
+.tile b{font-size:16px}.tile small{color:var(--mut)}
+.tile:hover{transform:translateY(-8px) rotateX(9deg) rotateY(-7deg);box-shadow:0 26px 40px rgba(20,33,61,.24)}
+.tile:active{transform:scale(.95)}
+.tile .ic{font-size:38px;width:76px;height:76px;display:grid;place-items:center;border-radius:22px;background:linear-gradient(145deg,hsl(var(--h) 72% 52%),hsl(calc(var(--h) + 40) 72% 38%));box-shadow:0 10px 18px hsla(var(--h),70%,35%,.45),inset 0 2px 0 rgba(255,255,255,.4);transform:translateZ(34px);animation:float 3.6s ease-in-out infinite;animation-delay:calc(var(--i)*-320ms)}
+@keyframes rise{from{opacity:0;transform:translateY(28px) rotateX(-28deg)}}
+@keyframes float{50%{transform:translateZ(34px) translateY(-6px)}}
+.card{box-shadow:0 6px 16px rgba(20,33,61,.1);transition:transform .2s,box-shadow .2s}.card:hover{transform:translateY(-4px);box-shadow:0 14px 24px rgba(20,33,61,.18)}
+.wrap{box-shadow:0 6px 16px rgba(20,33,61,.08)}
+.btn{box-shadow:0 3px 0 rgba(0,0,0,.25);transition:transform .1s,box-shadow .1s}.btn:active{transform:translateY(3px);box-shadow:none}.btn.s,.btn.d{box-shadow:none}
+.login{box-shadow:0 24px 50px rgba(20,33,61,.25);animation:rise .7s both;perspective:900px}
+html:root:not([data-theme=none]){--bg:#060a18;--card:rgba(255,255,255,.06);--ink:#eef2ff;--mut:#9aa6c9;--line:rgba(255,255,255,.13);--acc:#22d3ee;--accfg:#031a24;--bad:#ff7a90;--warn:#fbbf24}
+body{background:var(--bg);overflow-x:hidden;letter-spacing:.1px}
+body::before,body::after{content:"";position:fixed;z-index:-1;width:60vmax;height:60vmax;border-radius:50%;filter:blur(90px);opacity:.55;animation:drift 20s ease-in-out infinite alternate}
+body::before{background:#6d28d9;top:-25vmax;left:-15vmax}body::after{background:#0891b2;bottom:-28vmax;right:-18vmax;animation-delay:-8s}
+@keyframes drift{to{transform:translate(12vmax,8vmax) scale(1.15)}}
+select option{background:#101935;color:#eef2ff}input::placeholder{color:var(--mut)}
+h2{font-size:clamp(24px,4.5vw,36px);font-weight:800;letter-spacing:-.5px;background:linear-gradient(90deg,#fff,#7dd3fc 60%,#c4b5fd);-webkit-background-clip:text;background-clip:text;color:transparent}
+h3{color:#c7d2fe}
+.top{background:rgba(8,12,30,.55);border-bottom:1px solid var(--line);backdrop-filter:blur(18px) saturate(160%)}
+.brand{background:linear-gradient(90deg,#fde68a,#fb923c);-webkit-background-clip:text;background-clip:text;color:transparent;font-weight:800}
+.tiles{gap:20px;grid-template-columns:repeat(auto-fill,minmax(145px,1fr))}
+.tile{position:relative;padding:26px 10px 20px;border-radius:24px;border:1px solid transparent;background:linear-gradient(rgba(16,22,48,.82),rgba(16,22,48,.82)) padding-box,linear-gradient(135deg,hsl(var(--h) 90% 68%),rgba(255,255,255,.05) 55%,hsl(calc(var(--h) + 60) 90% 62%)) border-box;backdrop-filter:blur(14px);box-shadow:0 18px 40px rgba(0,0,0,.45);transform:perspective(700px) rotateX(var(--rx,0deg)) rotateY(var(--ry,0deg));transition:transform .15s ease-out,box-shadow .3s;overflow:hidden}
+.tile::before{content:"";position:absolute;inset:0;border-radius:inherit;background:radial-gradient(220px circle at var(--mx,50%) var(--my,0%),rgba(255,255,255,.22),transparent 60%);opacity:0;transition:opacity .25s;pointer-events:none}
+.tile:hover{transform:perspective(700px) rotateX(var(--rx,0deg)) rotateY(var(--ry,0deg)) translateY(-8px) scale(1.04);box-shadow:0 28px 55px rgba(0,0,0,.55),0 0 46px hsla(var(--h),95%,62%,.38)}
+.tile:hover::before{opacity:1}
+.tile .ic{width:80px;height:80px;border-radius:26px;font-size:40px;transform:none;background:linear-gradient(150deg,hsl(var(--h) 90% 62%),hsl(calc(var(--h) + 50) 85% 42%));box-shadow:0 14px 26px hsla(var(--h),90%,50%,.5),inset 0 3px 0 rgba(255,255,255,.5),inset 0 -6px 10px rgba(0,0,0,.25);animation:bob 3.4s ease-in-out infinite;animation-delay:calc(var(--i)*-350ms)}
+@keyframes bob{50%{transform:translateY(-7px) rotate(-3deg)}}
+.tile b{font-size:16px;color:#fff;margin-top:6px}.tile small{color:var(--mut)}
+.card,.wrap{background:var(--card);backdrop-filter:blur(14px);border:1px solid var(--line);box-shadow:0 10px 30px rgba(0,0,0,.3)}
+.card{position:relative;overflow:hidden}.card::before{content:"";position:absolute;inset:0 0 auto;height:3px;background:linear-gradient(90deg,#22d3ee,#8b5cf6,#f472b6)}
+.card b{text-shadow:0 0 22px rgba(125,211,252,.35)}
+.card.big{border-left:1px solid var(--line);background:linear-gradient(135deg,rgba(34,211,238,.18),rgba(139,92,246,.18))}
+.ok{color:#34d399}
+tr:hover td{background:rgba(255,255,255,.04)}th{background:rgba(255,255,255,.04);color:#a5b4fc}
+.btn{background:linear-gradient(135deg,#22d3ee,#8b5cf6);color:#fff;border-radius:999px;padding:9px 18px;box-shadow:0 8px 22px rgba(99,102,241,.45);transition:transform .15s,box-shadow .15s,filter .15s}
+.btn:hover{transform:translateY(-2px);filter:brightness(1.12)}.btn:active{transform:translateY(1px) scale(.98);box-shadow:0 2px 8px rgba(99,102,241,.4)}
+.btn.s{background:rgba(34,211,238,.08);color:#67e8f9;border:1px solid rgba(34,211,238,.5);box-shadow:none;padding:4px 12px}
+.btn.d{background:rgba(255,122,144,.08);border-radius:999px;padding:4px 12px;box-shadow:none}
+input,select{background:rgba(255,255,255,.07);border:1px solid var(--line);border-radius:10px;transition:border-color .2s,box-shadow .2s}
+input:focus,select:focus{border-color:#22d3ee;box-shadow:0 0 0 3px rgba(34,211,238,.25);outline:0}
+.login{background:rgba(16,22,48,.7);backdrop-filter:blur(20px);border:1px solid var(--line);border-radius:24px;box-shadow:0 30px 70px rgba(0,0,0,.55),0 0 60px rgba(139,92,246,.25)}
+.cal button{background:var(--card);border-radius:10px;color:var(--ink);transition:transform .15s}.cal button:hover{transform:translateY(-3px) scale(1.06)}
+.cal button.dot::after{box-shadow:0 0 8px var(--acc)}.cal button.sel{background:linear-gradient(135deg,#22d3ee,#8b5cf6);outline:0}
+.modal{backdrop-filter:blur(8px);background:rgba(3,6,18,.7)}.modal>div{background:#0f1730;border:1px solid var(--line);border-radius:20px;box-shadow:0 30px 80px rgba(0,0,0,.6)}
+main{animation:flip .55s both}@keyframes flip{from{opacity:0;transform:perspective(900px) rotateY(-14deg) translateX(-24px)}}
+.hero{display:flex;flex-wrap:wrap;align-items:center;gap:24px;margin:14px 0;padding:18px 24px;border-radius:24px;perspective:700px;background:linear-gradient(135deg,rgba(34,211,238,.14),rgba(139,92,246,.16));border:1px solid var(--line);backdrop-filter:blur(14px);box-shadow:0 18px 44px rgba(0,0,0,.4)}
+.coin{position:relative;width:66px;height:66px;transform-style:preserve-3d;animation:spin 5s linear infinite}
+.coin i,.coin::after{content:"₹";position:absolute;inset:0;border-radius:50%;display:grid;place-items:center;font:700 34px/1 "Segoe UI",sans-serif;font-style:normal;color:#7c2d12;background:radial-gradient(circle at 30% 28%,#fef3c7,#f59e0b 58%,#b45309);box-shadow:0 0 30px rgba(251,191,36,.55),inset 0 0 0 5px rgba(255,255,255,.25),inset 0 0 0 7px rgba(180,83,9,.5);backface-visibility:hidden}
+.coin i{content:none}.coin::after{transform:rotateY(180deg)}
+@keyframes spin{to{transform:rotateY(360deg)}}
+.hs span{display:block;color:var(--mut);font-size:13px}.hs b{font-size:26px;text-shadow:0 0 22px rgba(125,211,252,.4);font-variant-numeric:tabular-nums}
+.clk{margin-left:auto;text-align:right}.clk b{display:block;font-size:24px;font-variant-numeric:tabular-nums}.clk span{color:var(--mut);font-size:13px}
+.alert{margin:0 0 10px;padding:10px 14px;border-radius:14px;border:1px solid rgba(34,211,238,.4);background:rgba(34,211,238,.08);animation:fade .5s both}.alert.bad{border-color:rgba(255,122,144,.5);background:rgba(255,122,144,.1)}
+.bars{display:flex;align-items:flex-end;gap:12px;height:220px;padding:18px 16px 12px;perspective:800px;background:var(--card);border:1px solid var(--line);border-radius:18px;box-shadow:0 10px 30px rgba(0,0,0,.3)}
+.bar{flex:1;height:100%;display:flex;flex-direction:column;justify-content:flex-end;align-items:center;gap:4px;min-width:0}
+.bar em{font-style:normal;font-size:11px;color:var(--mut);white-space:nowrap}.bar span{font-size:12px;color:var(--mut)}
+.bar i{display:block;width:100%;max-width:48px;height:calc(var(--h) - 22%);min-height:4px;border-radius:8px 8px 3px 3px;background:linear-gradient(180deg,#67e8f9,#8b5cf6);transform-origin:bottom;transform:rotateX(-10deg) rotateY(-22deg);box-shadow:9px 0 0 rgba(0,0,0,.28),0 0 26px rgba(34,211,238,.45);animation:grow .9s cubic-bezier(.2,.9,.3,1.2) both;animation-delay:calc(var(--i)*90ms)}
+@keyframes grow{from{height:0}}
+.toast{position:fixed;left:50%;bottom:calc(24px + env(safe-area-inset-bottom,0px));transform:translateX(-50%);z-index:20;padding:10px 20px;border-radius:999px;background:rgba(16,22,48,.92);border:1px solid #22d3ee;box-shadow:0 0 30px rgba(34,211,238,.4);animation:pop .4s both;max-width:90vw}
+@keyframes pop{from{opacity:0;transform:translate(-50%,20px) scale(.9)}}
+.hbr{display:grid;grid-template-columns:100px 1fr;gap:2px 10px;align-items:center;margin:10px 0}.hbr span{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.hbr b{grid-column:2;font-size:12px;color:var(--mut);font-weight:500}
+.hbr i{display:block;height:16px;width:var(--w);min-width:6px;border-radius:8px;background:linear-gradient(90deg,#22d3ee,#8b5cf6);box-shadow:0 6px 14px rgba(34,211,238,.35),inset 0 2px 0 rgba(255,255,255,.4);transform-origin:left;animation:sweep .8s both;animation-delay:calc(var(--i)*80ms)}
+@keyframes sweep{from{transform:scaleX(0)}}
+.sr{display:block;width:100%;text-align:left;background:none;border:0;border-bottom:1px solid var(--line);color:var(--ink);font:inherit;padding:10px 14px;cursor:pointer}.sr:hover{background:rgba(34,211,238,.12)}
+.cf{position:fixed;top:40%;left:50%;width:8px;height:14px;z-index:30;pointer-events:none;border-radius:2px;animation:burst 1.4s cubic-bezier(.1,.7,.3,1) forwards}
+@keyframes burst{to{transform:translate(var(--x),var(--y)) rotate(var(--r));opacity:0}}
+@media(prefers-reduced-motion:reduce){.cf{display:none}}
+*{scrollbar-width:thin;scrollbar-color:#3b4a78 transparent}
+body{font-family:"Plus Jakarta Sans","Segoe UI",system-ui,sans-serif;background:radial-gradient(520px circle at var(--gx,65%) var(--gy,18%),rgba(99,102,241,.18),transparent 65%) fixed,radial-gradient(rgba(255,255,255,.065) 1px,transparent 1px) 0 0/28px 28px,var(--bg)}
+h2,.brand,.tile b,.card b,.hs b,.clk b{font-family:Outfit,"Plus Jakarta Sans",sans-serif}
+h2{position:relative;padding-bottom:12px;margin-bottom:18px}h2::after{content:"";position:absolute;left:0;bottom:0;width:64px;height:4px;border-radius:4px;background:linear-gradient(90deg,#22d3ee,#8b5cf6,#f472b6);animation:grow2 .8s both}
+@keyframes grow2{from{width:0}}
+h3{display:flex;align-items:center;gap:8px}h3::before{content:"";width:4px;height:16px;border-radius:3px;background:linear-gradient(#22d3ee,#8b5cf6)}
+.top{margin:10px 12px 0;top:calc(env(safe-area-inset-top,0px) + 8px);border:1px solid var(--line);border-radius:18px;box-shadow:0 10px 30px rgba(0,0,0,.35),inset 0 1px 0 rgba(255,255,255,.1)}
+main{padding:22px 16px 70px}
+.tile{padding:30px 12px 22px;border-radius:26px;gap:8px;min-height:190px;justify-content:center}
+.tile::after{content:"";position:absolute;inset:0;border-radius:inherit;background:linear-gradient(115deg,transparent 35%,rgba(255,255,255,.16) 50%,transparent 65%);transform:translateX(-120%);pointer-events:none}
+.tile:hover::after{transform:translateX(120%);transition:transform .9s}
+.tile .ic{position:relative;width:88px;height:88px;border-radius:28px;font-size:44px}
+.tile .ic::before{content:"";position:absolute;left:8px;right:8px;top:5px;height:38%;border-radius:20px 20px 40px 40px;background:linear-gradient(rgba(255,255,255,.3),rgba(255,255,255,0))}
+.tile .ic::after{content:"";position:absolute;left:12%;right:12%;bottom:-18px;height:12px;border-radius:50%;background:hsla(var(--h),90%,50%,.45);filter:blur(8px)}
+.tile b{font-weight:700;letter-spacing:.2px}
+.hero{padding:22px 28px;border-radius:28px;gap:30px;position:relative;overflow:hidden}
+.hero::before{content:"";position:absolute;left:-60px;top:-110px;width:320px;height:320px;border-radius:50%;background:radial-gradient(circle,rgba(251,191,36,.25),transparent 65%);pointer-events:none}
+.hero>*{position:relative}.hs b{font-size:30px}.coin{width:76px;height:76px}.coin i,.coin::after{font-size:40px}
+.card{padding:16px 18px;border-radius:18px}
+.card b{font-size:26px;font-weight:700;background:linear-gradient(90deg,#fff,#a5f3fc);-webkit-background-clip:text;background-clip:text;color:transparent;text-shadow:none}
+.card b.ok{background:linear-gradient(90deg,#34d399,#bbf7d0);-webkit-background-clip:text;background-clip:text}
+.card b.bad{background:linear-gradient(90deg,#ff7a90,#fecdd3);-webkit-background-clip:text;background-clip:text}
+.wrap{border-radius:18px}th{position:sticky;top:0;text-transform:uppercase;letter-spacing:.6px;font-size:11.5px}
+tr:nth-child(even) td{background:rgba(255,255,255,.025)}tr:hover td{background:rgba(34,211,238,.09)!important}
+td .ok,td .bad,td .warn{display:inline-block;padding:2px 10px;border-radius:999px;font-size:12.5px;font-weight:600}
+td .ok{background:rgba(52,211,153,.14)}td .bad{background:rgba(255,122,144,.14)}td .warn{background:rgba(251,191,36,.14)}
+.btn{background-size:200% 100%;font-weight:600;letter-spacing:.2px}.btn:hover{background-position:100% 0}
+input:not([type=checkbox]),select{height:42px;padding:0 14px;border-radius:12px}
+.login{position:relative;overflow:hidden;isolation:isolate;border:0;background:none;backdrop-filter:none;padding:30px}
+.login::before{content:"";position:absolute;inset:-60%;z-index:-2;background:conic-gradient(from 0deg,transparent 0 55%,#22d3ee,#8b5cf6,#f472b6,transparent 95%);animation:rot 5s linear infinite}
+.login::after{content:"";position:absolute;inset:2px;border-radius:22px;background:rgba(9,14,34,.94);z-index:-1}
+@keyframes rot{to{transform:rotate(360deg)}}
+.login h2{text-align:center;font-size:30px}.login h2::after{left:50%;margin-left:-32px}.login .btn{padding:12px}
+.modal>div{animation:pop2 .35s both}@keyframes pop2{from{opacity:0;transform:scale(.92) translateY(20px)}}
+@media(max-width:520px){.tiles{grid-template-columns:repeat(2,1fr);gap:14px}.tile{min-height:160px;padding:22px 8px}.tile .ic{width:72px;height:72px;font-size:36px}.hero{gap:16px;padding:16px}.clk{margin-left:0;text-align:left;width:100%}main{padding:16px 12px 70px}}
+/* ===== THEMES: admin Bento / shopkeeper Clay / login mix ===== */
+body.t-admin{--bg:#090d17;--card:#121929;--line:#1f2b47;--ink:#eef1ff;--mut:#8d99ba;--acc:#c8f169;--accfg:#10140a;background:#090d17}
+body.t-admin::before,body.t-admin::after,body.t-shop::before,body.t-shop::after,body.t-auth::before,body.t-auth::after{display:none}
+body.t-admin h2{background:none;-webkit-background-clip:border-box;background-clip:border-box;color:#f4f6ff;font-weight:800}
+body.t-admin h2::after,body.t-admin h3::before{background:#c8f169}body.t-admin h3{color:#dfe5ff}
+body.t-admin .top{background:#121929;backdrop-filter:none;border:1px solid var(--line);border-radius:20px;box-shadow:none}
+body.t-admin .brand{background:none;-webkit-background-clip:border-box;background-clip:border-box;color:#c8f169}
+body.t-admin .btn{background:#c8f169;color:#10140a;border-radius:14px;box-shadow:none;font-weight:700}
+body.t-admin .btn:hover{filter:brightness(1.07);transform:translateY(-1px)}
+body.t-admin .btn.s{background:transparent;color:#c9d4ff;border:1px solid #2b3b66}body.t-admin .btn.d{border-radius:14px}
+body.t-admin input:not([type=checkbox]),body.t-admin select{background:#0d1322;border:1px solid #22304f;border-radius:14px}
+body.t-admin input:focus,body.t-admin select:focus{border-color:#c8f169;box-shadow:0 0 0 3px rgba(200,241,105,.2)}
+body.t-admin .tiles{grid-template-columns:repeat(4,1fr);grid-auto-rows:minmax(150px,auto);grid-auto-flow:dense;gap:14px;perspective:none}
+body.t-admin .tile{--tc:#c8f169;background:var(--tc);border:0;border-radius:26px;color:#10131f;box-shadow:none;backdrop-filter:none;min-height:0;align-items:flex-start;justify-content:space-between;text-align:left;padding:18px;transform:none}
+body.t-admin .tile:hover{transform:translateY(-4px);box-shadow:0 16px 30px rgba(0,0,0,.45)}
+body.t-admin .tile::before,body.t-admin .tile::after,body.t-admin .tile .ic::before,body.t-admin .tile .ic::after{display:none}
+body.t-admin .tile:nth-child(6n+2){--tc:#8fb4ff}body.t-admin .tile:nth-child(6n+3){--tc:#ffb86b}body.t-admin .tile:nth-child(6n+4){--tc:#d6b8ff}body.t-admin .tile:nth-child(6n+5){--tc:#7ee0c3}body.t-admin .tile:nth-child(6n+6){--tc:#ff9ec2}
+body.t-admin .tile b{color:#10131f;font-size:18px;margin:0}body.t-admin .tile small{color:rgba(16,19,31,.68)}
+body.t-admin .tile .ic{width:62px;height:62px;border-radius:20px;background:#fff;box-shadow:none;font-size:30px;animation:none}
+body.t-admin .tile:nth-child(1){grid-column:span 2;grid-row:span 2}body.t-admin .tile:nth-child(1) .ic{width:96px;height:96px;font-size:50px;border-radius:30px}body.t-admin .tile:nth-child(1) b{font-size:28px}
+body.t-admin .tile:nth-child(5),body.t-admin .tile:nth-child(10){grid-column:span 2}
+body.t-admin .cards{grid-template-columns:repeat(4,1fr);gap:14px;grid-auto-flow:dense}
+body.t-admin .card,body.t-admin .wrap,body.t-admin .bars{background:#121929;border:1px solid var(--line);border-radius:24px;box-shadow:none;backdrop-filter:none}
+body.t-admin .card{padding:18px}body.t-admin .card::before{display:none}
+body.t-admin .card b{font-size:28px;background:none;-webkit-background-clip:border-box;background-clip:border-box;color:#f4f6ff;text-shadow:none}
+body.t-admin .card b.ok{color:#c8f169}body.t-admin .card b.bad{color:#ff8a9a}
+body.t-admin .card.big{grid-column:span 2;background:#c8f169;border:0}body.t-admin .card.big span,body.t-admin .card.big b{color:#10140a}
+body.t-admin .hero{background:linear-gradient(135deg,#6d4aff,#3b82f6);border:0;border-radius:26px;backdrop-filter:none;box-shadow:none}
+body.t-admin .hero::before{display:none}body.t-admin .hs span,body.t-admin .clk span{color:rgba(255,255,255,.82)}body.t-admin .hs b,body.t-admin .clk b{color:#fff;text-shadow:none}
+body.t-admin th{background:transparent;color:#8d99ba}body.t-admin .alert{border-radius:18px}
+@media(max-width:760px){body.t-admin .tiles{grid-template-columns:repeat(2,1fr)}body.t-admin .tile:nth-child(n){grid-column:auto;grid-row:auto}body.t-admin .tile:nth-child(1){grid-column:span 2}body.t-admin .cards{grid-template-columns:repeat(2,1fr)}}
+body.t-shop,body.t-auth{--cl:9px 9px 20px rgba(150,155,200,.42),-8px -8px 18px rgba(255,255,255,.95),inset -4px -4px 9px rgba(130,120,190,.12),inset 4px 4px 9px rgba(255,255,255,.85);--bg:#e8ebff;--card:#f3f1ff;--ink:#3a3860;--mut:#7a78a0;--line:rgba(110,100,190,.16);--acc:#7c6cf0;--accfg:#fff;--bad:#e5484d;--warn:#c47a00;font-family:Nunito,"Plus Jakarta Sans",system-ui,sans-serif;color:#3a3860}
+body.t-shop{background:radial-gradient(600px 400px at 8% 0,#ffe3f1,transparent 60%),radial-gradient(600px 400px at 100% 8%,#d9f3ff,transparent 60%),#e8ebff}
+body.t-auth{background:linear-gradient(135deg,#dfe3ff,#ffe3ee 55%,#dcf7ec);min-height:100vh}
+body.t-shop h2,body.t-auth .aright h2{background:none;-webkit-background-clip:border-box;background-clip:border-box;color:#4a3fb0;font-weight:800}
+body.t-shop h2::after,body.t-auth .aright h2::after{background:linear-gradient(90deg,#ff9ec2,#9b8cff);height:6px;border-radius:6px}body.t-shop h3{color:#5a4fc0}body.t-shop h3::before{background:#ff9ec2;border-radius:6px}
+body.t-shop .top,body.t-shop .card,body.t-shop .wrap,body.t-shop .hero,body.t-shop .alert,body.t-shop .bars{background:var(--card);border:0;border-radius:28px;box-shadow:var(--cl);backdrop-filter:none}
+body.t-shop .top{border-radius:30px}body.t-shop .brand{background:none;-webkit-background-clip:border-box;background-clip:border-box;color:#5b4bd6;font-family:Nunito,sans-serif;font-weight:800}
+body.t-shop .card{padding:18px}body.t-shop .card::before{display:none}
+body.t-shop .card b{background:none;-webkit-background-clip:border-box;background-clip:border-box;color:#3a3860;text-shadow:none;font-family:Nunito,sans-serif;font-weight:800}
+body.t-shop .card b.ok,body.t-shop .ok{color:#157a55}body.t-shop .card b.bad{color:#d3363f}
+body.t-shop .card.big{background:linear-gradient(135deg,#e1d9ff,#ffe0ee)}
+body.t-shop .hero{background:linear-gradient(135deg,#e5dcff,#ffe1ee)}body.t-shop .hero::before{display:none}body.t-shop .hs b,body.t-shop .clk b{color:#3a3860;text-shadow:none}
+body.t-shop .tiles{gap:20px;perspective:none;grid-template-columns:repeat(auto-fill,minmax(150px,1fr))}
+body.t-shop .tile{--tc:#ffd9c7;background:var(--tc);border:0;border-radius:34px;box-shadow:var(--cl);backdrop-filter:none;transform:none;transition:transform .2s cubic-bezier(.3,1.6,.5,1),box-shadow .2s;color:#3a3860}
+body.t-shop .tile:nth-child(5n+2){--tc:#c9f2e0}body.t-shop .tile:nth-child(5n+3){--tc:#dcd3ff}body.t-shop .tile:nth-child(5n+4){--tc:#cfe9ff}body.t-shop .tile:nth-child(5n+5){--tc:#fff0b8}
+body.t-shop .tile::before,body.t-shop .tile::after{display:none}
+body.t-shop .tile:hover{transform:translateY(-8px) scale(1.04)}body.t-shop .tile:active{transform:scale(.92)}
+body.t-shop .tile:nth-child(1){grid-column:span 2}
+body.t-shop .tile b{color:#3a3860;font-family:Nunito,sans-serif;font-weight:800}body.t-shop .tile small{color:#6b6990}
+body.t-shop .tile .ic{border-radius:50%;background:#fff;box-shadow:6px 6px 14px rgba(150,155,200,.4),-5px -5px 12px rgba(255,255,255,.9),inset -3px -3px 7px rgba(130,120,190,.14);font-size:42px}
+body.t-shop .tile .ic::before,body.t-shop .tile .ic::after{display:none}
+body.t-shop .btn,body.t-auth .aright .btn{background:linear-gradient(145deg,#a597ff,#7c6cf0);color:#fff;border-radius:24px;font-weight:800;padding:11px 20px;box-shadow:6px 6px 14px rgba(124,108,240,.38),-4px -4px 10px rgba(255,255,255,.9),inset 2px 2px 4px rgba(255,255,255,.45),inset -3px -3px 6px rgba(0,0,0,.12);transition:transform .18s cubic-bezier(.3,1.6,.5,1),box-shadow .18s}
+body.t-shop .btn:hover,body.t-auth .aright .btn:hover{transform:translateY(-3px) scale(1.03);filter:none}
+body.t-shop .btn:active,body.t-auth .aright .btn:active{transform:scale(.93);box-shadow:inset 4px 4px 9px rgba(0,0,0,.2)}
+body.t-shop .btn.s{background:var(--card);color:#6a5ae0;border:0;box-shadow:5px 5px 11px rgba(150,155,200,.38),-4px -4px 9px rgba(255,255,255,.95);padding:6px 14px}
+body.t-shop .btn.d{background:var(--card);color:#d3363f;border:0;border-radius:22px;box-shadow:5px 5px 11px rgba(150,155,200,.38),-4px -4px 9px rgba(255,255,255,.95);padding:6px 14px}
+body.t-shop input:not([type=checkbox]),body.t-shop select{background:#eceaff;color:#3a3860;border:0;border-radius:20px;box-shadow:inset 4px 4px 9px rgba(150,160,200,.5),inset -4px -4px 9px #fff}
+body.t-shop input:focus,body.t-shop select:focus{box-shadow:inset 4px 4px 9px rgba(150,160,200,.5),inset -4px -4px 9px #fff,0 0 0 3px rgba(124,108,240,.35)}
+body.t-shop select option{background:#fff;color:#3a3860}body.t-shop input::placeholder{color:#9a98bd}
+body.t-shop th{background:transparent;color:#7a78a0;text-transform:none;letter-spacing:0;font-size:13px}
+body.t-shop tr:nth-child(even) td{background:rgba(124,108,240,.05)}body.t-shop tr:hover td{background:rgba(124,108,240,.1)!important}
+body.t-shop td .ok{background:#c9f2e0;color:#157a55}body.t-shop td .bad{background:#ffd9dc;color:#b42330}body.t-shop td .warn{background:#ffefc2;color:#8a5a00}
+body.t-shop .sr{color:#3a3860}body.t-shop .cal button{background:var(--card);box-shadow:4px 4px 9px rgba(150,155,200,.35),-3px -3px 7px #fff;border:0;color:#3a3860}
+body.t-shop .toast,body.t-shop #cs{background:#f3f1ff;color:#3a3860;border:0;box-shadow:var(--cl)}
+body.t-shop .modal{background:rgba(70,60,130,.35)}body.t-shop .modal>div{background:#f3f1ff;color:#3a3860;border:0;border-radius:30px;box-shadow:var(--cl)}
+.auth{display:grid;grid-template-columns:1.05fr 1fr;gap:16px;max-width:860px;margin:8vh auto;padding:0 16px;animation:rise .7s both}
+.aleft{background:linear-gradient(145deg,#171a33,#3a2f7a);color:#fff;border-radius:32px;padding:30px;display:flex;flex-direction:column;justify-content:space-between;gap:24px;min-height:360px;position:relative;overflow:hidden}
+.aleft::after{content:"";position:absolute;right:-60px;top:-60px;width:220px;height:220px;border-radius:50%;background:radial-gradient(circle,rgba(200,241,105,.55),transparent 65%)}
+.aleft>*{position:relative;z-index:1}.aleft h1{margin:0;font:800 34px/1.1 Outfit,Nunito,sans-serif}.aleft p{margin:6px 0 0;opacity:.8}
+.aleft .logo{width:84px;height:84px;border-radius:28px;background:#fff;display:grid;place-items:center;font-size:44px;box-shadow:0 14px 28px rgba(0,0,0,.35);animation:bob 3.4s ease-in-out infinite}
+.chips{display:grid;grid-template-columns:1fr 1fr;gap:10px}.chips span{background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.18);padding:10px 12px;border-radius:16px;font-weight:700;font-size:14px}
+.aright{background:#f3f1ff;border-radius:32px;padding:30px;color:#3a3860;align-self:center;box-shadow:12px 12px 26px rgba(150,155,200,.5),-10px -10px 22px rgba(255,255,255,.95),inset -6px -6px 12px rgba(130,120,190,.1),inset 6px 6px 12px rgba(255,255,255,.9)}
+.aright h2{margin-top:0}.aright .hint{color:#7a78a0;margin-top:0}
+.aright input{width:100%;margin-bottom:12px;background:#eceaff;color:#3a3860;border:0;border-radius:20px;height:48px;box-shadow:inset 4px 4px 9px rgba(150,160,200,.5),inset -4px -4px 9px #fff}
+.aright input:focus{box-shadow:inset 4px 4px 9px rgba(150,160,200,.5),inset -4px -4px 9px #fff,0 0 0 3px rgba(124,108,240,.35);outline:0}.aright input::placeholder{color:#9a98bd}
+.aright .btn{width:100%}body.t-auth #err{color:#d3363f;margin-top:10px;font-weight:700}body.t-auth #cs{background:#f3f1ff;color:#3a3860}
+@media(max-width:700px){.auth{grid-template-columns:1fr;margin:4vh auto}.aleft{min-height:0}}
+@media print{body.t-admin,body.t-shop{background:#fff!important;color:#000!important}}
+
+@media print{.toast{display:none}body{background:#fff;color:#000}body::before,body::after{display:none}h2{color:#000;background:none}.modal>div{background:#fff}}
+@media(prefers-reduced-motion:reduce){*,*::before,*::after{animation:none!important;transition:none!important}}
+</style></head><body><div id="root"></div>
+<script>
+const K='shopmgr_v1';let S,U=null,tab='',cart=[],selDate=null,calM=new Date(),lf='';
+const T=()=>new Date().toISOString().slice(0,10),fmt=n=>'₹'+Number(n||0).toLocaleString('en-IN'),
+esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])),
+$=s=>document.querySelector(s),v=id=>$('#'+id).value.trim();
+function E(){return{shops:[],products:[],bills:[],pays:[],rets:[],exp:[],ann:[],closes:[],log:[]}}
+function load(){S=E()}
+function save(){if(window.FB)window.FB.push()}
+window.G={get S(){return S},set S(v){S=v},get U(){return U},set U(v){U=v},get tab(){return tab},set tab(v){tab=v}};
+function lg(a){S.log.unshift({ts:Date.now(),t:new Date().toLocaleString('en-IN'),u:U.role=='admin'?'Admin':U.shop.id,a});S.log=S.log.slice(0,200);save();toast(a)}
+const live=b=>b.status!='cancelled',shop=id=>S.shops.find(s=>s.id==id)||{name:id};
+const bal=id=>S.bills.filter(b=>b.shop==id&&live(b)).reduce((a,b)=>a+b.total-b.paid,0)-S.pays.filter(p=>p.shop==id).reduce((a,p)=>a+p.amt,0)-(S.rets||[]).filter(r=>r.shop==id).reduce((a,r)=>a+r.amt,0);
+const tbl=(h,rows,empty='Nothing here yet.')=>`<div class="wrap"><table><tr>${h.map(x=>`<th>${x}</th>`).join('')}</tr>${rows.length?rows.map(r=>`<tr>${r.map(c=>`<td>${c}</td>`).join('')}</tr>`).join(''):`<tr><td colspan="${h.length}" class="hint">${empty}</td></tr>`}</table></div>`;
+const AT=[['dash','Dashboard'],['cal','Business Calendar'],['shops','Shopkeepers'],['prods','Products'],['bills','Sales & Bills'],['pay','Payments'],['led','Ledger'],['ana','Analytics'],['exp','Expenses'],['ann','Announcements'],['ret','Returns'],['close','Daily Closing'],['set','Settings'],['log','Activity Log']],
+ST=[['bill','New Bill'],['bills','Sales History'],['led','My Ledger'],['ret','Returns'],['rep','Daily Report']];
+function render(){const R=$('#root');document.body.className=U?(U.role=='admin'?'t-admin':'t-shop'):'t-auth';
+if(!U){R.innerHTML=window.AUTHV?window.AUTHV():'<div class="login"><h2>Loading…</h2></div>';return}
+const IC={dash:['📊','Dashboard','Sales ek nazar mein'],cal:['📅','Calendar','Date wise hisaab'],shops:['🏪','Shopkeepers','ID banao / band karo'],prods:['📦','Products','Price aur stock'],bills:['🧾','Bills','Saare bills'],pay:['💰','Payments','Paisa aaya / baaki'],led:['📒','Ledger','Khata'],log:['🕓','Activity','Kisne kya kiya'],exp:['💸','Expenses','Kharcha likho'],ann:['📢','Announcements','Sabko message bhejo'],ret:['↩️','Returns','Maal wapas'],close:['🔒','Daily Closing','Din ka hisaab band'],set:['⚙️','Settings','Business setting'],ana:['🔥','Analytics','Kya zyada bik raha hai'],bill:['🛒','New Bill','Naya bill banao'],rep:['📈','Daily Report','Aaj ka hisaab']};
+const m=U.role=='admin'?AT:ST,home=tab=='home';
+R.innerHTML=`<header class="top noprint">${home?'':'<button class="btn" onclick="tab=\'home\';render()">🏠 Home</button>'}<span class="brand">🏪 ${U.role=='admin'?esc(S.biz||'Admin'):esc(U.shop.name)}</span><button class="btn s" onclick="out()">Log out</button></header><main>${home?`<h2>${U.role=='admin'?'Welcome, Admin':'Namaste, '+esc(U.shop.owner||U.shop.name)}</h2><p class="hint">Jo kaam karna hai, uska icon dabao.</p>${hero()}<div class="tiles">${m.map(([k],i)=>`<button class="tile" style="--i:${i};--h:${(i*47+170)%360}" onclick="tab='${k}';render()"><span class="ic">${IC[k][0]}</span><b>${IC[k][1]}</b><small>${IC[k][2]}</small></button>`).join('')}</div>`:view()}</main>`}
+function view(){const a=U.role=='admin';
+if(a)return({dash,cal:calv,shops:shopsv,prods:prodsv,bills:billsv,pay:payv,led:ledv,exp:expv,ann:annv,ana:anav,ret:retv,close:closev,set:setv,log:()=>`<h2>Activity Log</h2>`+tbl(['When','User','Activity'],S.log.map(l=>[l.t,l.u,esc(l.a)]))})[tab]();
+return({bill:billv,bills:billsv,led:ledv,ret:retv,rep:repv})[tab]()}
+function range(k){const d=new Date(),t=T(),f=x=>{const e=new Date();e.setDate(e.getDate()-x);return e.toISOString().slice(0,10)};
+return k=='today'?[t,t]:k=='7'?[f(6),t]:k=='30'?[f(29),t]:['0000','9999']}
+function dash(){const k=lf||'today',[a,b]=range(k),bs=S.bills.filter(x=>live(x)&&x.date>=a&&x.date<=b),ps=S.pays.filter(p=>p.date>=a&&p.date<=b),
+sales=bs.reduce((s,x)=>s+x.total,0),rec=bs.reduce((s,x)=>s+x.paid,0)+ps.reduce((s,p)=>s+p.amt,0),out=S.shops.reduce((s,x)=>s+bal(x.id),0),
+pq={};bs.forEach(x=>x.items.forEach(i=>{pq[i.name]=(pq[i.name]||0)+i.qty}));const top=Object.entries(pq).sort((x,y)=>y[1]-x[1])[0];
+return`<h2>Dashboard</h2><div class="row"><select onchange="lf=this.value;render()">${[['today','Today'],['7','Last 7 days'],['30','Last 30 days'],['all','All time']].map(([v,n])=>`<option value="${v}" ${v==k?'selected':''}>${n}</option>`).join('')}</select></div>
+<div class="cards"><div class="card big"><span>Total sales</span><b>${fmt(sales)}</b></div><div class="card"><span>Payment received</span><b class="ok">${fmt(rec)}</b></div><div class="card"><span>Total outstanding</span><b class="bad">${fmt(out)}</b></div><div class="card"><span>Active shopkeepers</span><b>${S.shops.filter(s=>s.active).length}/${S.shops.length}</b></div><div class="card"><span>Bills</span><b>${bs.length}</b></div><div class="card"><span>Top product</span><b style="font-size:17px">${top?esc(top[0])+' ('+top[1]+')':'—'}</b></div></div>
+${chart7()}<h3>Shopkeeper ranking</h3>`+tbl(['Rank','Shop','Sales','Bills','Pending'],S.shops.map(s=>({s,x:bs.filter(b=>b.shop==s.id)})).sort((p,q)=>q.x.reduce((a,b)=>a+b.total,0)-p.x.reduce((a,b)=>a+b.total,0)).map((o,i)=>[['🥇','🥈','🥉'][i]||i+1,esc(o.s.name),fmt(o.x.reduce((a,b)=>a+b.total,0)),o.x.length,`<span class="${bal(o.s.id)>0?'bad':''}">${fmt(bal(o.s.id))}</span>`]))}
+function calv(){const y=calM.getFullYear(),m=calM.getMonth(),n=new Date(y,m+1,0).getDate(),f=new Date(y,m,1).getDay(),has=new Set(S.bills.map(b=>b.date));
+let g='SMTWTFS'.split('').map(x=>`<i>${x}</i>`).join('')+'<span></span>'.repeat(f);
+for(let d=1;d<=n;d++){const ds=`${y}-${String(m+1).padStart(2,'0')}-${String(d).padStart(2,'0')}`;g+=`<button class="${has.has(ds)?'dot':''} ${selDate==ds?'sel':''}" onclick="selDate='${ds}';render()">${d}</button>`}
+return`<h2>Business Calendar</h2><div class="row"><button class="btn s" onclick="calM=new Date(${y},${m-1},1);render()">‹</button><b>${calM.toLocaleString('en-IN',{month:'long',year:'numeric'})}</b><button class="btn s" onclick="calM=new Date(${y},${m+1},1);render()">›</button></div><div class="cal">${g}</div><p class="hint">Dot = transactions recorded that day.</p>${selDate?dayrep(selDate):'<p class="hint">Select a date to see that day’s full report.</p>'}`}
+function dayrep(d){const bs=S.bills.filter(b=>b.date==d&&live(b)),ps=S.pays.filter(p=>p.date==d),sum=(l,f)=>l.reduce((a,x)=>a+f(x),0),
+cash=sum(bs.filter(b=>b.mode=='Cash'),b=>b.paid)+sum(ps.filter(p=>p.mode=='Cash'),p=>p.amt),upi=sum(bs.filter(b=>b.mode=='UPI'),b=>b.paid)+sum(ps.filter(p=>p.mode=='UPI'),p=>p.amt),
+sales=sum(bs,b=>b.total),rec=sum(bs,b=>b.paid)+sum(ps,p=>p.amt),units=sum(bs,b=>sum(b.items,i=>i.qty));
+return`<h3>${d}</h3><div class="cards"><div class="card"><span>Sales</span><b>${fmt(sales)}</b></div><div class="card"><span>Received</span><b class="ok">${fmt(rec)}</b></div><div class="card"><span>Cash</span><b>${fmt(cash)}</b></div><div class="card"><span>UPI</span><b>${fmt(upi)}</b></div><div class="card"><span>Bills</span><b>${bs.length}</b></div><div class="card"><span>Units sold</span><b>${units}</b></div></div>
+<h3>By shopkeeper</h3>`+tbl(['Shop','Sales','Pending from bills'],S.shops.map(s=>{const x=bs.filter(b=>b.shop==s.id);return[esc(s.name),fmt(sum(x,b=>b.total)),fmt(sum(x,b=>b.total-b.paid))]}).filter(r=>r[1]!='₹0'),'No sales on this date.')}
+function shopsv(){return`<h2>Shopkeepers</h2><div class="row noprint"><input id="sn" placeholder="Shop name"><input id="so" placeholder="Owner"><input id="sm" placeholder="Mobile"><input id="sc" placeholder="City"><input id="se" placeholder="Email (password reset ke liye, optional)"><input id="su" placeholder="Username" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false"><input id="sp" placeholder="Password (6+)" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false"><button class="btn" onclick="addShop()">Create shopkeeper ID</button></div><div id="err" class="bad"></div>`+
+tbl(['Shop ID','Shop','Owner','Username','Pending','Status',''],S.shops.map(s=>[s.id,esc(s.name),esc(s.owner),esc(s.user),fmt(bal(s.id)),s.active?'<span class="ok">Active</span>':'<span class="bad">Deactivated</span>',`<button class="btn s" onclick="togShop('${s.id}')">${s.active?'Deactivate':'Activate'}</button> <button class="btn s" onclick="rstShop('${s.id}')">Reset password</button>`]))}
+function addShop(){const n=v('sn'),u=v('su'),p=v('sp');if(!n||!u||p.length<6)return $('#err').textContent='Enter shop name, username and a password of 6+ characters.';
+if(S.shops.some(s=>s.user==u))return $('#err').textContent='That username is taken.';const id='SHOP-'+(1001+S.shops.length);
+S.shops.push({id,name:n,owner:v('so'),mobile:v('sm'),city:v('sc'),user:u,pass:p,active:true});lg('Shopkeeper created: '+id);render()}
+function togShop(id){const s=shop(id);s.active=!s.active;lg((s.active?'Activated ':'Deactivated ')+id);render()}
+function rstShop(id){const p=prompt('New password (6+ characters)');if(p&&p.length>=6){shop(id).pass=p;lg('Password reset: '+id);alert('Password updated.')}}
+function prodsv(){return`<h2>Products</h2><div class="row noprint"><input id="pn" placeholder="Product name"><input id="pc" placeholder="Code (optional)"><input id="pp" type="number" min="0" placeholder="Price ₹"><input id="ps" type="number" min="0" placeholder="Stock"><input id="pu" placeholder="Unit" value="piece"><button class="btn" onclick="addProd()">Add product</button></div><div id="err" class="bad"></div>`+
+tbl(['Code','Product','Price','Stock','Status',''],S.products.map(p=>[p.code,esc(p.name),fmt(p.price)+' / '+esc(p.unit),`<span class="${p.stock<=(S.low??20)?'bad':''}">${p.stock}</span>`,p.active?'Active':'Disabled',`<button class="btn s" onclick="setPrice('${p.id}')">Change price</button> <button class="btn s" onclick="addStock('${p.id}')">Add stock</button> <button class="btn s" onclick="togProd('${p.id}')">${p.active?'Disable':'Enable'}</button>`]))}
+function addProd(){const n=v('pn'),pr=+v('pp');if(!n||!(pr>=0)||v('pp')==='')return $('#err').textContent='Enter a product name and price.';const id='P'+Date.now();
+S.products.push({id,code:v('pc')||'PRD-'+String(S.products.length+1).padStart(3,'0'),name:n,price:pr,stock:+v('ps')||0,unit:v('pu')||'piece',active:true});lg('Product added: '+n);render()}
+function setPrice(id){const p=S.products.find(x=>x.id==id),n=prompt('New price for '+p.name,p.price);if(n!==null&&+n>=0&&n!==''){lg(`Price of ${p.name}: ${fmt(p.price)} → ${fmt(+n)}`);p.price=+n;render()}}
+function addStock(id){const p=S.products.find(x=>x.id==id),n=+prompt('Quantity received for '+p.name);if(n>0){p.stock+=n;lg(`Stock +${n}: ${p.name}`);render()}}
+function togProd(id){const p=S.products.find(x=>x.id==id);p.active=!p.active;lg((p.active?'Enabled ':'Disabled ')+p.name);render()}
+function billv(){const q=(lf||'').toLowerCase(),pl=S.products.filter(p=>p.active&&(p.name+p.code).toLowerCase().includes(q)),tot=cart.reduce((a,i)=>a+i.rate*i.qty,0);
+return`<h2>New Bill</h2>${lastBtn()}<div class="row"><input placeholder="Search product or code" value="${esc(lf)}" oninput="lf=this.value;render();$('main input').focus();$('main input').setSelectionRange(99,99)"></div>
+<div class="wrap" style="margin-bottom:14px">${tbl(['Product','Price (set by Admin)','In stock',''],pl.map(p=>[esc(p.name),fmt(p.price)+' / '+esc(p.unit),p.stock,p.stock>0?`<button class="btn s" onclick="addCart('${p.id}')">Add</button>`:'<span class="bad">Out of stock</span>']))}</div>
+<h3>Bill items</h3>`+tbl(['Product','Rate','Qty','Amount',''],cart.map((i,x)=>[esc(i.name),fmt(i.rate),`<input type="number" min="1" value="${i.qty}" style="width:70px" onchange="cart[${x}].qty=Math.max(1,+this.value||1);render()">`,fmt(i.rate*i.qty),`<button class="btn d" onclick="cart.splice(${x},1);render()">Remove</button>`]),'Add products to start a bill.')+
+`<h3>Grand total: ${fmt(tot)}</h3><div class="row"><input id="cn" placeholder="Customer name (optional)">${S.disc?'<input id="dc" type="number" min="0" placeholder="Discount ₹">':''}<select id="pm"><option>Cash</option><option>UPI</option><option>Bank Transfer</option><option>Credit</option></select><input id="pa" type="number" min="0" placeholder="Amount paid now ₹" value="${tot}"><button class="btn" onclick="mkBill()">Generate bill</button></div><div id="err" class="bad"></div>`}
+function addCart(id){const p=S.products.find(x=>x.id==id),c=cart.find(i=>i.pid==id);if(c)c.qty++;else cart.push({pid:id,name:p.name,rate:p.price,qty:1});render()}
+function mkBill(){if(!cart.length)return $('#err').textContent='Add at least one product.';
+for(const i of cart){if(S.products.find(p=>p.id==i.pid).stock<i.qty)return $('#err').textContent='Not enough stock for '+i.name+'.'}
+const sub=cart.reduce((a,i)=>a+i.rate*i.qty,0),dc=S.disc?Math.min(sub,Math.max(0,+v('dc')||0)):0,tot=sub-dc,mode=v('pm'),paid=mode=='Credit'?0:Math.min(tot,Math.max(0,+v('pa')||0)),d=T(),n=S.bills.filter(b=>b.date.slice(0,7)==d.slice(0,7)).length+1;
+const b={id:'B'+Date.now(),no:`INV-${U.shop.id.slice(5)}-${d.slice(0,4)}-${d.slice(5,7)}-${String(n).padStart(4,'0')}`,shop:U.shop.id,date:d,time:new Date().toLocaleTimeString('en-IN'),items:cart.map(i=>({...i})),total:tot,disc:dc,paid,mode,cust:v('cn'),status:'ok'};
+cart.forEach(i=>S.products.find(p=>p.id==i.pid).stock-=i.qty);S.bills.push(b);lg('Bill generated: '+b.no+' '+fmt(tot));cart=[];lf='';render();show(b.id);confetti()}
+function mine(){return U.role=='admin'?S.bills:S.bills.filter(b=>b.shop==U.shop.id)}
+function billsv(){return`<h2>${U.role=='admin'?'Sales & Bills':'Sales History'}</h2>`+tbl(['Bill no.','Date','Shop','Amount','Paid','Pending','Status',''],mine().slice().reverse().map(b=>[b.no,b.date,esc(shop(b.shop).name),fmt(b.total),fmt(b.paid),fmt(b.total-b.paid),live(b)?(b.paid>=b.total?'<span class="ok">Paid</span>':'<span class="warn">Pending</span>'):'<span class="bad">Cancelled</span>',`<button class="btn s" onclick="show('${b.id}')">View</button>`]))}
+function show(id){const b=S.bills.find(x=>x.id==id),m=document.createElement('div');m.className='modal';m.id='mod';
+m.innerHTML=`<div>${S.biz?`<p class="hint" style="margin:0">${esc(S.biz)}</p>`:''}<h3 style="margin-top:0">${b.no} ${live(b)?'':'<span class="bad">(Cancelled)</span>'}</h3><p class="hint">${esc(shop(b.shop).name)} · ${b.date} ${b.time||''}${b.cust?' · '+esc(b.cust):''}</p>${tbl(['Product','Rate','Qty','Amount'],b.items.map(i=>[esc(i.name),fmt(i.rate),i.qty,fmt(i.rate*i.qty)]))}<p>${b.disc?'Discount '+fmt(b.disc)+' · ':''}<b>Total ${fmt(b.total)}</b> · Paid ${fmt(b.paid)} (${b.mode}) · Pending ${fmt(b.total-b.paid)}</p>${live(b)?'':`<p class="bad">Reason: ${esc(b.reason)}</p>`}<div class="row noprint"><button class="btn" onclick="window.print()">Print</button><a class="btn" style="text-decoration:none" target="_blank" rel="noopener" href="https://wa.me/?text=${encodeURIComponent(b.no+' | '+shop(b.shop).name+' | Total '+fmt(b.total)+' | Paid '+fmt(b.paid)+' | Pending '+fmt(b.total-b.paid))}">WhatsApp</a>${live(b)?`<button class="btn d" onclick="cancelBill('${b.id}')">Cancel bill</button>`:''}<button class="btn s" onclick="$('#mod').remove()">Close</button></div></div>`;document.body.append(m)}
+function cancelBill(id){if((S.bills.find(x=>x.id==id)||{}).ret)return alert('Is bill par return ho chuka hai, isliye cancel nahi ho sakta.');const r=prompt('Reason for cancelling (required)');if(!r)return;const b=S.bills.find(x=>x.id==id);b.status='cancelled';b.reason=r;
+b.items.forEach(i=>{const p=S.products.find(x=>x.id==i.pid);if(p)p.stock+=i.qty});lg('Bill cancelled: '+b.no+' — '+r);$('#mod').remove();render()}
+function payv(){return`<h2>Payments & Collection</h2><div class="row noprint"><select id="ph">${S.shops.map(s=>`<option value="${s.id}">${esc(s.name)} — pending ${fmt(bal(s.id))}</option>`).join('')}</select><input id="pa" type="number" min="1" placeholder="Amount ₹"><select id="pm"><option>Cash</option><option>UPI</option><option>Bank Transfer</option></select><input id="pr" placeholder="Transaction ID"><button class="btn" onclick="addPay()">Record payment</button></div><div id="err" class="bad"></div>`+
+remtbl()+tbl(['Receipt','Date','Shop','Amount','Mode','Ref','Balance after'],S.pays.slice().reverse().map(p=>[p.no,p.date,esc(shop(p.shop).name),fmt(p.amt),p.mode,esc(p.ref),fmt(p.after)]))}
+function addPay(){const a=+v('pa');if(!(a>0))return $('#err').textContent='Enter a payment amount.';const s=v('ph');
+S.pays.push({no:`PAY-${T().slice(0,4)}-${String(S.pays.length+1).padStart(4,'0')}`,date:T(),shop:s,amt:a,mode:v('pm'),ref:v('pr'),after:bal(s)-a});lg(`Payment ${fmt(a)} from ${s}`);render()}
+function ledv(){const id=U.role=='admin'?(lf&&lf.startsWith('SHOP')?lf:S.shops[0]?.id):U.shop.id;if(!id)return'<h2>Ledger</h2>';
+let ev=[...S.bills.filter(b=>b.shop==id&&live(b)).flatMap(b=>[[b.date,'Bill '+b.no,b.total,0],...(b.paid?[[b.date,'Paid at billing ('+b.mode+')',0,b.paid]]:[])]),...S.pays.filter(p=>p.shop==id).map(p=>[p.date,'Payment '+p.no,0,p.amt]),...(S.rets||[]).filter(r=>r.shop==id).map(r=>[r.date,'Return '+r.no,0,r.amt])].sort((a,b)=>a[0]<b[0]?-1:1),run=0;
+return`<h2>${U.role=='admin'?'Ledger':'My Ledger'}</h2>${U.role=='admin'?`<div class="row"><select onchange="lf=this.value;render()">${S.shops.map(s=>`<option value="${s.id}" ${s.id==id?'selected':''}>${esc(s.name)}</option>`).join('')}</select></div>`:''}<div class="cards"><div class="card big"><span>Current balance</span><b class="${bal(id)>0?'bad':'ok'}">${fmt(bal(id))}</b></div></div><div class="row noprint"><button class="btn s" onclick="window.print()">Print statement</button></div>`+
+tbl(['Date','Description','Sales','Payment','Balance'],ev.map(e=>{run+=e[2]-e[3];return[e[0],esc(e[1]),e[2]?fmt(e[2]):'—',e[3]?fmt(e[3]):'—',fmt(run)]}))}
+function repv(){const bs=S.bills.filter(b=>b.shop==U.shop.id&&b.date==T()&&live(b)),s=bs.reduce((a,b)=>a+b.total,0),p=bs.reduce((a,b)=>a+b.paid,0);
+return`<h2>Daily Report — ${T()}</h2><div class="cards"><div class="card big"><span>Sales</span><b>${fmt(s)}</b></div><div class="card"><span>Received</span><b class="ok">${fmt(p)}</b></div><div class="card"><span>Pending</span><b class="bad">${fmt(s-p)}</b></div><div class="card"><span>Bills</span><b>${bs.length}</b></div></div>`}
+function hero(){const a=U.role=='admin',t=T(),bs=S.bills.filter(b=>live(b)&&b.date==t&&(a||b.shop==U.shop.id)),s=bs.reduce((x,b)=>x+b.total,0),r=bs.reduce((x,b)=>x+b.paid,0)+(a?S.pays.filter(p=>p.date==t).reduce((x,p)=>x+p.amt,0):0),low=a?S.products.filter(p=>p.active&&p.stock<=(S.low??20)):[],al=a?null:(S.ann||[]).find(x=>x.to=='all'||x.to==U.shop.id);
+setTimeout(()=>{count();tick()},0);
+return`<div class="row"><input id="gs" placeholder="🔍 Search: shop, bill no, product, receipt…" oninput="gsearch(this.value)" style="flex:1;min-width:220px"></div><div id="sres"></div><div class="hero"><div class="coin"><i></i></div><div class="hs"><span>Aaj ki sale</span><b data-n="${s}">0</b></div><div class="hs"><span>Paisa mila</span><b data-n="${r}">0</b></div><div class="hs"><span>Bills</span><b data-n="${bs.length}" data-p="1">0</b></div><div class="clk" id="clk"></div></div>`+(low.length?`<div class="alert bad">⚠️ Stock kam hai: ${low.map(p=>esc(p.name)+' ('+p.stock+')').join(', ')}</div>`:'')+(al?`<div class="alert">📢 ${esc(al.text)}</div>`:'')}
+function count(){document.querySelectorAll('[data-n]').forEach(el=>{const n=+el.dataset.n,p=el.dataset.p,t0=performance.now();(function f(t){const k=Math.min(1,(t-t0)/900),x=Math.round(n*(1-Math.pow(1-k,3)));el.textContent=p?x:fmt(x);if(k<1)requestAnimationFrame(f)})(t0)})}
+let clkT;function tick(){clearInterval(clkT);const c=()=>{const e=$('#clk');if(!e){clearInterval(clkT);return}const d=new Date();e.innerHTML='<b>'+d.toLocaleTimeString('en-IN',{hour:'2-digit',minute:'2-digit',second:'2-digit'})+'</b><span>'+d.toLocaleDateString('en-IN',{weekday:'long',day:'numeric',month:'long'})+'</span>'};c();clkT=setInterval(c,1000)}
+function chart7(){const days=[...Array(7)].map((_,i)=>{const d=new Date();d.setDate(d.getDate()-6+i);return d.toISOString().slice(0,10)}),vals=days.map(d=>S.bills.filter(b=>live(b)&&b.date==d).reduce((a,b)=>a+b.total,0)),mx=Math.max(...vals,1);
+return`<h3>Last 7 days sales</h3><div class="bars">${days.map((d,i)=>`<div class="bar" style="--h:${Math.max(4,vals[i]/mx*100)}%;--i:${i}"><em>${fmt(vals[i])}</em><i></i><span>${d.slice(8)}/${d.slice(5,7)}</span></div>`).join('')}</div>`}
+let lf2='';
+function anav(){const k=lf2||'30',[a,b]=range(k),bs=S.bills.filter(x=>live(x)&&x.date>=a&&x.date<=b),pm={};bs.forEach(x=>x.items.forEach(i=>{const o=pm[i.name]=pm[i.name]||{q:0,s:0};o.q+=i.qty;o.s+=i.qty*i.rate}));
+const L=Object.entries(pm).sort((x,y)=>y[1].s-x[1].s),mx=Math.max(...L.map(x=>x[1].s),1),dead=S.products.filter(p=>!pm[p.name]);
+return`<h2>Analytics</h2><div class="row"><select onchange="lf2=this.value;render()">${[['today','Today'],['7','Last 7 days'],['30','Last 30 days'],['all','All time']].map(([v,n])=>`<option value="${v}" ${v==k?'selected':''}>${n}</option>`).join('')}</select></div><h3>Product-wise sales</h3><div>${L.map(([n,o],i)=>`<div class="hbr" style="--w:${o.s/mx*100}%;--i:${i}"><span>${esc(n)}</span><i></i><b>${fmt(o.s)} · ${o.q} pcs</b></div>`).join('')||'<p class="hint">Is period mein koi sale nahi.</p>'}</div><h3>Jo bik nahi raha</h3><p>${dead.length?dead.map(p=>esc(p.name)).join(', '):'Sab products bike 🎉'}</p>`}
+function remtbl(){const l=S.shops.filter(s=>bal(s.id)>0);return`<h3>Baaki paisa (reminder bhejo)</h3>`+tbl(['Shop','Pending',''],l.map(s=>{const n=(s.mobile||'').replace(/\D/g,''),w=(n.length==10?'91':'')+n;return[esc(s.name),`<span class="bad">${fmt(bal(s.id))}</span>`,n?`<a class="btn s" style="text-decoration:none" target="_blank" rel="noopener" href="https://wa.me/${w}?text=${encodeURIComponent('Namaste '+s.owner+', aapka '+fmt(bal(s.id))+' baaki hai. Kripya jald payment karein.')}">📲 WhatsApp reminder</a>`:'<span class="hint">Mobile number nahi</span>']}),'Kisi ka paisa baaki nahi 🎉')+`<h3>Payment history</h3>`}
+function lastBtn(){const l=S.bills.filter(b=>b.shop==U.shop.id&&live(b)).pop();return l&&!cart.length?`<div class="row"><button class="btn s" onclick="repeatBill('${l.id}')">🔁 Pichhla bill dubara (${l.no})</button></div>`:''}
+function repeatBill(id){const l=S.bills.find(b=>b.id==id);cart=l.items.map(i=>{const p=S.products.find(x=>x.id==i.pid);return p&&p.active?{pid:i.pid,name:p.name,rate:p.price,qty:i.qty}:null}).filter(Boolean);render()}
+function hue(h,q){document.documentElement.style.filter=h?`hue-rotate(${h}deg)`:'';if(!q){S.hue=h;save()}}
+function bk(){const t=$('#bkt');t.style.display='block';t.value=JSON.stringify(S);t.select()}
+let rb='';
+function retv(){S.rets=S.rets||[];const bl=mine().filter(live).reverse(),b=bl.find(x=>x.id==rb);
+return`<h2>Returns</h2><div class="row"><select onchange="rb=this.value;render()"><option value="">Bill chuno…</option>${bl.map(x=>`<option value="${x.id}" ${x.id==rb?'selected':''}>${x.no} — ${fmt(x.total)}</option>`).join('')}</select></div>`+(b?`<div style="margin-bottom:12px">${tbl(['Product','Rate','Sold','Already returned','Return qty'],b.items.map((i,k)=>{const done=(b.ret&&b.ret[i.pid])||0,left=i.qty-done;return[esc(i.name),fmt(i.rate),i.qty,done,left>0?`<input type="number" class="rq" data-k="${k}" min="0" max="${left}" value="0" style="width:80px">`:'—']}))}</div><div class="row"><input id="rr" placeholder="Return ka reason (zaroori)" style="flex:1;min-width:200px"><button class="btn" onclick="doRet()">Return karo</button></div><div id="err" class="bad"></div>`:'')+`<h3>Past returns</h3>`+tbl(['Receipt','Date','Bill','Amount','Reason'],S.rets.filter(r=>U.role=='admin'||r.shop==U.shop.id).reverse().map(r=>[r.no,r.date,r.bno,fmt(r.amt),esc(r.reason)]))}
+function doRet(){const b=S.bills.find(x=>x.id==rb),why=v('rr'),its=[];let amt=0;
+document.querySelectorAll('.rq').forEach(e=>{const q=Math.min(+e.value||0,+e.max),i=b.items[+e.dataset.k];if(q>0){its.push({i,q});amt+=q*i.rate}});
+if(!its.length)return $('#err').textContent='Kam se kam ek product ki quantity daalo.';if(!why)return $('#err').textContent='Reason likho.';
+b.ret=b.ret||{};its.forEach(({i,q})=>{b.ret[i.pid]=(b.ret[i.pid]||0)+q;const p=S.products.find(x=>x.id==i.pid);if(p)p.stock+=q});
+S.rets.push({no:`RET-${b.shop.slice(5)}-${T().slice(0,4)}-${String(S.rets.length+1).padStart(4,'0')}`,date:T(),shop:b.shop,bill:b.id,bno:b.no,amt,reason:why});lg('Return '+fmt(amt)+' on '+b.no);rb='';render()}
+function closev(){S.closes=S.closes||[];S.exp=S.exp||[];const t=T(),bs=S.bills.filter(b=>live(b)&&b.date==t),cash=bs.filter(b=>b.mode=='Cash').reduce((a,b)=>a+b.paid,0)+S.pays.filter(p=>p.date==t&&p.mode=='Cash').reduce((a,p)=>a+p.amt,0),ex=S.exp.filter(e=>e.date==t).reduce((a,e)=>a+e.amt,0),want=cash-ex,done=S.closes.find(c=>c.date==t);
+return`<h2>Daily Closing</h2><div class="cards"><div class="card"><span>Cash aaya</span><b>${fmt(cash)}</b></div><div class="card"><span>Kharcha</span><b>${fmt(ex)}</b></div><div class="card big"><span>Expected cash</span><b>${fmt(want)}</b></div></div>`+(done?`<div class="alert">🔒 Aaj ka din band ho chuka hai. Actual ${fmt(done.actual)}, difference ${fmt(done.diff)}.</div>`:`<div class="row"><input id="ca" type="number" min="0" placeholder="Actual cash ₹ (ginti)"><input id="cn2" placeholder="Note (optional)"><button class="btn" onclick="doClose(${want})">Din band karo</button></div><div id="err" class="bad"></div>`)+`<h3>Past closings</h3>`+tbl(['Date','Expected','Actual','Difference','Note'],S.closes.slice().reverse().map(c=>[c.date,fmt(c.exp),fmt(c.actual),`<span class="${c.diff<0?'bad':'ok'}">${fmt(c.diff)}</span>`,esc(c.note)]))}
+function doClose(e){if(v('ca')==='')return $('#err').textContent='Actual cash daalo.';const a=+v('ca');S.closes.push({date:T(),exp:e,actual:a,diff:a-e,note:v('cn2')});lg('Day closed: '+T());render()}
+function setv(){return`<h2>Settings</h2><div class="row"><input id="bz" placeholder="Business name" value="${esc(S.biz||'')}"><button class="btn" onclick="S.biz=v('bz');save();toast('Saved');render()">Save name</button></div><div class="row"><input id="lw" type="number" min="0" placeholder="Low stock limit" value="${S.low??20}"><button class="btn" onclick="S.low=+v('lw');save();toast('Saved');render()">Save limit</button></div><div class="row"><input id="np" type="password" placeholder="New admin password (6+)"><button class="btn" onclick="chPw()">Change password</button></div><div class="row"><label><input type="checkbox" ${S.disc?'checked':''} onchange="S.disc=this.checked;save();toast('Saved')"> Bills par discount allow karo</label></div><h3>Theme</h3><div class="row">${[['Original',0],['Warm',150],['Green',-80],['Pink',70]].map(([n,h])=>`<button class="btn s" onclick="hue(${h})">${n}</button>`).join('')}</div><h3>Backup</h3><div class="row"><button class="btn s" onclick="bk()">Backup dikhao</button><button class="btn s" onclick="rs()">Restore karo</button></div><textarea id="bkt" rows="4" style="width:100%;display:none"></textarea><div id="err" class="bad"></div>`}
+function gsearch(q){q=q.toLowerCase().trim();const L=[],a=U.role=='admin';if(q.length>1){
+if(a)S.shops.filter(s=>(s.id+s.name+s.owner+s.mobile+s.user).toLowerCase().includes(q)).forEach(s=>L.push(['🏪',s.id+' · '+s.name+' · pending '+fmt(bal(s.id)),`lf='${s.id}';tab='led';render()`]));
+mine().filter(b=>(b.no+(b.cust||'')).toLowerCase().includes(q)).slice(-5).forEach(b=>L.push(['🧾',b.no+' · '+fmt(b.total),`show('${b.id}')`]));
+if(a){S.products.filter(p=>(p.name+p.code).toLowerCase().includes(q)).forEach(p=>L.push(['📦',p.name+' · '+fmt(p.price)+' · stock '+p.stock,`tab='prods';render()`]));S.pays.filter(p=>p.no.toLowerCase().includes(q)).forEach(p=>L.push(['💰',p.no+' · '+fmt(p.amt),`tab='pay';render()`]))}}
+$('#sres').innerHTML=L.length?`<div class="wrap" style="margin-bottom:12px">${L.slice(0,8).map(r=>`<button class="sr" onclick="${r[2]}">${r[0]} ${esc(r[1])}</button>`).join('')}</div>`:(q.length>1?'<p class="hint">Kuch nahi mila.</p>':'')}
+function confetti(){for(let i=0;i<40;i++){const d=document.createElement('i');d.className='cf';const a=Math.random()*6.28,s=120+Math.random()*260;d.style.cssText=`--x:${Math.cos(a)*s}px;--y:${Math.sin(a)*s+140}px;--r:${Math.random()*720}deg;background:hsl(${Math.random()*360} 90% 60%)`;document.body.append(d);setTimeout(()=>d.remove(),1500)}}
+function toast(m){const d=document.createElement('div');d.className='toast';d.textContent='✓ '+m;document.body.append(d);setTimeout(()=>d.remove(),2600)}
+function expv(){S.exp=S.exp||[];const t=T(),m=t.slice(0,7),sum=l=>l.reduce((a,e)=>a+e.amt,0);
+return`<h2>Expenses</h2><div class="cards"><div class="card"><span>Today</span><b>${fmt(sum(S.exp.filter(e=>e.date==t)))}</b></div><div class="card"><span>This month</span><b>${fmt(sum(S.exp.filter(e=>e.date.slice(0,7)==m)))}</b></div></div><div class="row noprint"><input id="et" placeholder="Kharcha (jaise Transport)"><select id="ec">${['Transport','Packaging','Electricity','Rent','Salary','Maintenance','Purchase','Marketing','Other'].map(x=>`<option>${x}</option>`).join('')}</select><input id="ea" type="number" min="1" placeholder="Amount ₹"><button class="btn" onclick="addExp()">Add expense</button></div><div id="err" class="bad"></div>`+tbl(['Date','Title','Category','Amount'],S.exp.slice().reverse().map(e=>[e.date,esc(e.title),e.cat,fmt(e.amt)]))}
+function addExp(){const a=+v('ea'),t=v('et');if(!t||!(a>0))return $('#err').textContent='Title aur amount daalo.';S.exp.push({date:T(),title:t,cat:v('ec'),amt:a});lg('Expense added: '+t+' '+fmt(a));render()}
+function annv(){S.ann=S.ann||[];return`<h2>Announcements</h2><div class="row noprint"><input id="at" placeholder="Sabko kya batana hai?" style="flex:1;min-width:200px"><select id="ato"><option value="all">All shopkeepers</option>${S.shops.map(s=>`<option value="${s.id}">${esc(s.name)}</option>`).join('')}</select><button class="btn" onclick="addAnn()">Send</button></div><div id="err" class="bad"></div>`+tbl(['Date','To','Message'],S.ann.map(a=>[a.date,a.to=='all'?'All':esc(shop(a.to).name),esc(a.text)]))}
+function addAnn(){const t=v('at');if(!t)return $('#err').textContent='Message likho.';S.ann.unshift({date:T(),to:v('ato'),text:t});lg('Announcement sent');render()}
+document.addEventListener('pointermove',e=>{const s=document.documentElement.style;s.setProperty('--gx',e.clientX+'px');s.setProperty('--gy',e.clientY+'px')});
+document.addEventListener('pointermove',e=>{const t=e.target.closest&&e.target.closest('.tile');if(!t)return;const r=t.getBoundingClientRect(),x=(e.clientX-r.left)/r.width-.5,y=(e.clientY-r.top)/r.height-.5;t.style.setProperty('--ry',x*16+'deg');t.style.setProperty('--rx',-y*16+'deg');t.style.setProperty('--mx',(x+.5)*100+'%');t.style.setProperty('--my',(y+.5)*100+'%')});
+document.addEventListener('pointerout',e=>{const t=e.target.closest&&e.target.closest('.tile');if(t){t.style.setProperty('--rx','0deg');t.style.setProperty('--ry','0deg')}});
+load();render();
+</script><script type="module">
+import{initializeApp}from"https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+import{getAuth,onAuthStateChanged,signInWithEmailAndPassword,createUserWithEmailAndPassword,signOut,updatePassword,sendPasswordResetEmail}from"https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+import{getDatabase,ref,get,set,update,onValue,query,orderByChild,equalTo,limitToLast}from"https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js";
+const cfg={apiKey:"AIzaSyD7pFYaJ2yfgq-G17pzt4UgVw12jevIXmM",authDomain:"sr-fresh-bite.firebaseapp.com",databaseURL:"https://sr-fresh-bite-default-rtdb.firebaseio.com",projectId:"sr-fresh-bite",storageBucket:"sr-fresh-bite.firebasestorage.app",messagingSenderId:"705119931543",appId:"1:705119931543:web:651c043d2f8ff2ba49edd2"};
+const app=initializeApp(cfg),auth=getAuth(app),db=getDatabase(app),G=window.G,$$=i=>document.getElementById(i);
+const COLS=['shops','products','bills','pays','rets','exp','ann','closes','log'],last={},subs=[];
+let AS='loading',MSG='',setting=false,rt,lastSet='',sec;
+const cj=o=>JSON.stringify(o,(k,v)=>v&&typeof v=='object'&&!Array.isArray(v)?Object.keys(v).sort().reduce((a,x)=>(a[x]=v[x],a),{}):v);
+const uid=()=>Date.now().toString(36)+Math.random().toString(36).slice(2,6);
+const clean=u=>u.trim().toLowerCase().replace(/[^a-z0-9_-]/g,''),EM=u=>u.includes('@')?u.trim():clean(u)+'@shopmgr.app';
+const err=m=>{MSG=m;const e=$$('err');if(e)e.textContent=m};
+const why=e=>{const c=e.code||'',m=String(e.message||'');return c=='auth/operation-not-allowed'?'Firebase Console > Authentication > Sign-in method mein Email/Password ko ON karo.':c=='auth/network-request-failed'?'Internet ya network ki problem hai.':c=='auth/invalid-api-key'||c=='auth/api-key-not-valid.-please-pass-a-valid-api-key.'?'Firebase API key galat hai.':c=='auth/operation-not-supported-in-this-environment'?'Site ko http/https par kholo (double-click file se nahi). Firebase Hosting ya localhost use karo.':c=='auth/unauthorized-domain'?'Is domain ko Firebase Console > Authentication > Settings > Authorized domains mein add karo.':c=='auth/invalid-email'?'Username mein sirf letters, numbers aur . _ - rakho.':c=='auth/weak-password'?'Password kam se kam 6 characters ka rakho.':c=='auth/invalid-credential'||c=='auth/wrong-password'?'Ye username pehle se bana hai, par password alag hai.':(c.includes('PERMISSION')||m.includes('PERMISSION'))?'Database Rules publish nahi hue. database.rules.json ka content Realtime Database > Rules mein paste karke Publish karo.':'Error: '+(c||m)};
+const box=(t,b)=>`<div class="auth"><div class="aleft"><div><div class="logo">🏪</div><h1 style="margin-top:18px">Shop Manager</h1><p>Billing, hisaab aur reports — sab ek jagah.</p></div><div class="chips"><span>🧾 Bills</span><span>📒 Ledger</span><span>📊 Reports</span><span>🔒 Safe login</span></div></div><div class="aright"><h2>${t}</h2>${b}<div id="err" class="bad">${MSG}</div></div></div>`;
+const off='autocapitalize="off" autocorrect="off" spellcheck="false"';
+window.AUTHV=()=>AS=='loading'?box('Loading…',''):AS=='setup'?box('Pehli baar setup',`<p class="hint">Admin account banao. Ye sirf ek baar hota hai.</p><input id="sb" placeholder="Business / Shop ka naam"><input id="su" placeholder="Admin username ya email" autocomplete="username" ${off}><input id="sp" type="password" placeholder="Password (6+ characters)" autocomplete="new-password" ${off}><button class="btn" style="width:100%" onclick="setup()">Admin banao</button>`):box('Log in',`<p class="hint">Admin ho ya Shopkeeper — apna Username (ya Shop ID) aur Password daalo. Sahi account apne aap khul jaayega.</p><input id="u" placeholder="Username / Shop ID / Email" autocomplete="username" ${off}><input id="p" type="password" placeholder="Password" autocomplete="current-password" ${off} onkeydown="if(event.key=='Enter')login()"><button class="btn" style="width:100%" onclick="login()">Log in</button>`);
+const badge=document.createElement('div');badge.id='cs';badge.textContent='● …';
+const st=document.createElement('style');st.textContent='#cs{position:fixed;right:12px;bottom:calc(10px + env(safe-area-inset-bottom,0px));z-index:15;font-size:12px;padding:4px 12px;border-radius:999px;background:rgba(16,22,48,.85);border:1px solid var(--line);color:var(--mut)}#cs.on{color:#34d399;border-color:#34d399}#cs.off{color:#ff7a90;border-color:#ff7a90}.tabs{display:flex;gap:8px;margin:0 0 16px}.tabs button{flex:1;padding:10px 6px;border-radius:12px;border:1px solid var(--line);background:rgba(255,255,255,.05);color:var(--mut);font:inherit;font-weight:600;cursor:pointer;transition:transform .15s}.tabs button:hover{transform:translateY(-2px)}.tabs button.on{background:linear-gradient(135deg,#22d3ee,#8b5cf6);color:#fff;border-color:transparent;box-shadow:0 8px 20px rgba(99,102,241,.4)}@media print{#cs{display:none}}';
+document.head.append(st);document.body.append(badge);
+onValue(ref(db,'.info/connected'),s=>{const o=!!s.val();badge.className=o?'on':'off';badge.textContent=o?'● Online':'● Offline'});
+let synced=false;
+function syncMap(arr){const m={};arr.forEach(s=>{if(s.email&&s.id){const k=clean(s.user||'');if(k)m['loginmap/'+k]=s.email;m['loginmap/'+s.id.toLowerCase()]=s.email}});if(Object.keys(m).length)update(ref(db),m).catch(()=>window.toast('Rules dobara publish karo (Shop ID login ke liye)'))}
+function paint(){clearTimeout(rt);rt=setTimeout(()=>{if(G.U&&G.U.role=='shop'&&G.S.shops[0])G.U.shop=G.S.shops[0];const a=document.activeElement;if(a&&/INPUT|TEXTAREA|SELECT/.test(a.tagName))return;window.render()},120)}
+function listen(c,q){subs.push(onValue(q||ref(db,c),s=>{const arr=Object.values(s.val()||{});arr.forEach(it=>last[c+'/'+it.id]=cj(it));arr.sort((a,b)=>a.id<b.id?-1:1);if(c=='log')arr.reverse();G.S[c]=arr;if(c=='shops'&&G.U&&G.U.role=='admin'&&!synced){synced=true;syncMap(arr)}paint()},e=>console.warn(c,e.code)))}
+function settings(){subs.push(onValue(ref(db,'settings'),s=>{const v=s.val()||{};Object.assign(G.S,{biz:v.biz,low:v.low,disc:v.disc,hue:v.hue});lastSet=cj({biz:v.biz||'',low:v.low??20,disc:!!v.disc,hue:v.hue||0});window.hue(v.hue||0,1);paint()}))}
+function detach(){subs.splice(0).forEach(f=>f());Object.keys(last).forEach(k=>delete last[k]);lastSet='';synced=false}
+async function proceed(u){detach();try{const ur=(await get(ref(db,'users/'+u.uid))).val();
+if(!ur){MSG='Is account ka role nahi mila.';await signOut(auth);return}
+if(ur.role=='admin'){G.U={role:'admin'};COLS.forEach(c=>c=='log'?listen('log',query(ref(db,'log'),limitToLast(200))):listen(c))}
+else{const id=ur.shop,sh=(await get(ref(db,'shops/'+id))).val();if(!sh||!sh.active){MSG='Ye account deactivate hai. Admin se baat karo.';await signOut(auth);return}
+G.U={role:'shop',shop:sh};
+subs.push(onValue(ref(db,'shops/'+id),s=>{const it=s.val();if(!it||!it.active){signOut(auth);return}last['shops/'+id]=cj(it);G.S.shops=[it];paint()}));
+listen('products');listen('ann');['bills','pays','rets'].forEach(c=>listen(c,query(ref(db,c),orderByChild('shop'),equalTo(id))))}
+settings();G.tab='home';window.render()}catch(e){MSG=why(e);await signOut(auth)}}
+onAuthStateChanged(auth,async u=>{if(setting)return;if(!u){detach();G.U=null;G.S=window.E();try{AS=(await Promise.race([get(ref(db,'meta/adminUid')),new Promise((_,r)=>setTimeout(()=>r({code:'auth/network-request-failed'}),10000))])).exists()?'login':'setup'}catch(e){AS='login';MSG=why(e)}window.render();MSG='';return}await proceed(u)});
+window.login=async()=>{const u=$$('u').value.trim(),p0=$$('p').value;if(!u||!p0)return err('Username aur password daalo.');let em=EM(u);
+try{if(!u.includes('@')){try{const m=(await get(ref(db,'loginmap/'+clean(u)))).val();if(m)em=m}catch(e){}}
+try{await signInWithEmailAndPassword(auth,em,p0)}catch(e){if(p0!==p0.trim()&&(e.code=='auth/invalid-credential'||e.code=='auth/wrong-password'))await signInWithEmailAndPassword(auth,em,p0.trim());else throw e}}
+catch(e){const c=e.code||'';err(['auth/invalid-credential','auth/wrong-password','auth/user-not-found','auth/invalid-email'].includes(c)?'Username/Shop ID ya password galat hai. (Login email: '+em+') Password mein capital/small letter ka dhyan rakho.':why(e))}};
+window.setup=async()=>{const b=$$('sb').value.trim(),u=$$('su').value,p=$$('sp').value;if(!b||!u||p.length<6)return err('Naam, username aur 6+ character password daalo.');setting=true;let c;
+try{try{c=await createUserWithEmailAndPassword(auth,EM(u),p)}catch(e){if(e.code=='auth/email-already-in-use')c=await signInWithEmailAndPassword(auth,EM(u),p);else throw e}
+await set(ref(db,'meta/adminUid'),c.user.uid);await set(ref(db,'users/'+c.user.uid),{role:'admin'});await set(ref(db,'settings'),{biz:b,low:20,disc:false,hue:0});setting=false;proceed(c.user)}
+catch(e){setting=false;err(why(e))}};
+window.out=()=>signOut(auth);
+window.FB={push(){const S=G.S;if(!G.U)return;const u={};
+COLS.forEach(c=>(S[c]||[]).forEach(it=>{if(!it.id)it.id=uid();const j=cj(it);if(last[c+'/'+it.id]!==j){last[c+'/'+it.id]=j;u[c+'/'+it.id]=JSON.parse(j)}}));
+if(G.U.role=='admin'){const t={biz:S.biz||'',low:S.low??20,disc:!!S.disc,hue:S.hue||0},j=cj(t);if(j!==lastSet){lastSet=j;u.settings=t}}
+if(Object.keys(u).length)update(ref(db),u).catch(e=>{Object.keys(u).forEach(k=>delete last[k]);lastSet='';window.toast('Save nahi hua: '+(e.code||e.message))})}};
+window.addShop=async()=>{const S=G.S,n=$$('sn').value.trim(),u=clean($$('su').value),p=$$('sp').value.trim(),re=$$('se').value.trim(),e=$$('err');
+if(!n||!u||p.length<6)return e.textContent='Shop name, username aur 6+ character password daalo.';
+const ex=S.shops.find(s=>s.user==u),id=ex?ex.id:'SHOP-'+(1001+S.shops.length),email=re||(ex&&ex.email)||u+'@shopmgr.app';
+if(ex&&!confirm('Ye username pehle se hai. Kya iska login dobara banana hai? (Ye tabhi chalega jab Firebase Console > Authentication > Users se purana user delete ho chuka ho, ya password wahi ho.)'))return;
+try{sec=sec||initializeApp(cfg,'sec');const sa=getAuth(sec);let c;try{c=await createUserWithEmailAndPassword(sa,email,p)}catch(y){if(y.code!='auth/email-already-in-use')throw y;try{c=await signInWithEmailAndPassword(sa,email,p)}catch(z){e.textContent='Ye username/email Firebase mein pehle se bana hua hai (kisi purani koshish se) aur uska password alag hai. Naya username lo, ya Firebase Console > Authentication > Users mein us user ko delete karo.';return}}await signOut(sa);
+await set(ref(db,'users/'+c.user.uid),{role:'shop',shop:id});let lm=true;try{await update(ref(db),{['loginmap/'+u]:email,['loginmap/'+id.toLowerCase()]:email})}catch(x){lm=false}
+const rec={id,name:n,owner:$$('so').value.trim(),mobile:$$('sm').value.trim(),city:$$('sc').value.trim(),user:u,email,realEmail:!!re||!!(ex&&ex.realEmail),uid:c.user.uid,active:true};
+if(ex)Object.assign(ex,rec);else S.shops.push(rec);
+window.lg('Shopkeeper '+(ex?'login re-linked: ':'created: ')+id);window.render();alert('Shopkeeper ID taiyar hai.\nShop ID: '+id+'\nUsername: '+u+(re?'\nEmail: '+re:'')+'\nPassword: '+p+'\n\nShopkeeper isi Username (ya Shop ID) aur Password se login karega.'+(lm?'':'\n\nDhyan: Shop ID se login abhi nahi chalega. Firebase Rules dobara publish karo. Tab tak Username se login karo.'))}
+catch(x){e.textContent=x.code=='auth/email-already-in-use'?'Ye username/email pehle se hai.':why(x)}};
+window.rstShop=async id=>{const s=G.S.shops.find(x=>x.id==id);if(s&&s.realEmail){try{await sendPasswordResetEmail(auth,s.email);window.toast('Reset email bhej diya')}catch(e){alert('Fail: '+e.code)}}else alert('Is shopkeeper ka email nahi diya gaya, isliye password yahan se reset nahi ho sakta. Firebase Console > Authentication mein reset kar sakte ho.')};
+window.chPw=async()=>{const p=$$('np').value;if(p.length<6)return err('Kam se kam 6 characters.');try{await updatePassword(auth.currentUser,p);window.toast('Password badal gaya');$$('np').value=''}catch(e){err(e.code=='auth/requires-recent-login'?'Log out karke dobara login karo, phir try karo.':'Fail: '+e.code)}};
+window.rs=()=>alert('Restore yahan se band hai (live database ki suraksha ke liye).');
+</script>
+</body></html>
